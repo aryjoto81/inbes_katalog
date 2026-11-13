@@ -9,7 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CarouselController;
 use App\Http\Controllers\FrontProductController;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 
 
 Route::get('/products', [FrontProductController::class, 'products'])->name('front.products');
@@ -63,3 +63,12 @@ Route::middleware(['web'])->group(function () {
     Route::get('/{linkid}', [FrontProductController::class, 'show'])->name('front.product.detail');
 });
 
+Route::get('/test-storage', function () {
+    $path = 'carousels/JHbNq10yAkOFEangyNG3GM94P59wH3srcm78IjF6.jpg';
+
+    if (!Storage::disk('public')->exists($path)) {
+        return 'File tidak ditemukan oleh Laravel';
+    }
+
+    return Storage::disk('public')->response($path);
+});
