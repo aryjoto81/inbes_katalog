@@ -63,7 +63,3 @@ Route::middleware(['web'])->group(function () {
     Route::get('/{linkid}', [FrontProductController::class, 'show'])->name('front.product.detail');
 });
 
-Route::get('/buat-storage-link', function () {
-    Artisan::call('storage:link');
-    return 'Storage link berhasil dibuat!';
-});
