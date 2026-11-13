@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CarouselController;
 use App\Http\Controllers\FrontProductController;
+use Illuminate\Support\Facades\Artisan;
 
 
 Route::get('/products', [FrontProductController::class, 'products'])->name('front.products');
@@ -60,4 +61,9 @@ Route::middleware(['web'])->group(function () {
 
     // PENTING: Wildcard /{linkid} harus berada di urutan PALING BAWAH
     Route::get('/{linkid}', [FrontProductController::class, 'show'])->name('front.product.detail');
+});
+
+Route::get('/buat-storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Storage link berhasil dibuat!';
 });
