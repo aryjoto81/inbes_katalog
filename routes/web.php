@@ -62,3 +62,12 @@ Route::middleware(['web'])->group(function () {
     Route::get('/{linkid}', [FrontProductController::class, 'show'])->name('front.product.detail');
 });
 
+Route::get('/storage/{path}', function ($path) {
+    $filePath = storage_path('app/public/' . $path);
+
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+
+    return response()->file($filePath);
+})->where('path', '.*');
