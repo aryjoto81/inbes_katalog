@@ -1,0 +1,40 @@
+FROM php:8.3-fpm
+
+# Install system dependencies & PHP extensions
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    nginx \
+    libpq-dev \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy semua file project
+COPY . /var/www/html
+
+# Install dependencies composer (mode production)
+RUN composer install --no-dev --optimize-autoloader
+
+# Set permissions untuk folder storage dan cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Copy konfigurasi Nginx
+COPY docker/nginx.conf /etc/nginx/sites-available/default
+
+EXPOSE 80
+
+# Command saat container menyala: cache config, jalankan migrasi database FreeDB, lalu jalankan Nginx & PHP-FPM
+CMD ["sh", "-c", "php artisan config:cache && php artisan route:cache && php artisan migrate --force && php-fpm -D && nginx -g 'daemon off;'"]
