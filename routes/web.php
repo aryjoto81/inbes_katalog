@@ -62,11 +62,3 @@ Route::middleware(['web'])->group(function () {
     Route::get('/{linkid}', [FrontProductController::class, 'show'])->name('front.product.detail');
 });
 
-Route::get('/check-storage', function () {
-    $publicStorage = public_path('storage');
-    return [
-        'exists' => file_exists($publicStorage),
-        'is_link' => is_link($publicStorage),
-        'target' => is_link($publicStorage) ? readlink($publicStorage) : 'Bukan symlink',
-    ];
-});
